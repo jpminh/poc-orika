@@ -36,27 +36,14 @@ public class JpaModelService {
             for (Field field : clazz.getFields()) {
                 if (isSimpleClass(field)) {
                     Type type = field.getGenericType();
-//                    log.debug("field name: " + field.getName());
                     if (type instanceof ParameterizedType) {
                         ParameterizedType ptype = (ParameterizedType) type;
-//                        log.debug("-raw type:" + ptype.getRawType());
-//                        log.debug("-type arg: " + ptype.getActualTypeArguments()[0]);
-//                        log.debug("-type arg: " + ptype.getActualTypeArguments()[1]);
                         containEntity(entitiesClazz, rootEntities, ptype.getRawType(), ptype.getActualTypeArguments()[1], ptype.getActualTypeArguments()[0], field, entitiesAsMap);
-//                        if (!entitiesClazz.contains(ptype.getActualTypeArguments()[1])) {
-//                        if ("javax.persistence.metamodel.SingularAttribute".equals(ptype.getRawType().getTypeName())) {
-//                            clazzMap.put(field.getName(), ptype.getActualTypeArguments()[1].getTypeName());
-//                        } else {
-//                            clazzMap.put(field.getName(), new Object[]{ptype.getActualTypeArguments()[1].getTypeName()});
-//                        }
-//                        }
                     } else {
-//                        log.debug("-field type: " + field.getType());
                         clazzMap.put(field.getName(), field.getType().getSimpleName());
                     }
                 }
             }
-//            entitiesAsMap.put(staticModel.value().getName(), clazzMap);
         }
 
         for (Class<?> clazz : rootEntities) {
@@ -72,15 +59,12 @@ public class JpaModelService {
     }
 
     private boolean containEntity(Set<Class<?>> entitiesClazz, Set<Class<?>> rootEntities, Type rawType, Type clazz, Type eClazz, Field field, Map<String, Object> entitiesAsMap) throws NoSuchFieldException {
-//        log.debug("Field {} contains class {} ? {}", field.getName(), clazz.getTypeName(), rootEntities.contains(clazz));
         Map<String, Object> e = (Map<String, Object>) entitiesAsMap.get(eClazz.getTypeName());
         if (entitiesClazz.contains(clazz)) {
-//            log.debug("Search annotation");
             Optional<Class<?>> optClazz = entitiesClazz.stream().filter(entityClazz -> entityClazz.equals(eClazz)).findFirst();
             if (optClazz.isPresent()) {
                 Class<?> cl = optClazz.get();
                 Field f = cl.getDeclaredField(field.getName());
-//                log.info(f.toString());
                 Annotation[] annotations = f.getAnnotations();
                 for (Annotation ann : annotations) {
                     log.info(ann.toString());
